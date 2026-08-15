@@ -1,0 +1,7 @@
+{
+  "name": "TEKMEN Revolution",
+  "description": "TEKMEN Revolution is a technology ecosystem helping businesses go digital, building solutions for real-world problems, competing through innovation, and connecting the next generation of technology builders.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
