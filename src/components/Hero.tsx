@@ -1,12 +1,16 @@
 import React from 'react';
 import { ArrowRight, Users, Briefcase, Box, Trophy } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HeroProps {
   onExploreClick: () => void;
   onJoinCommunityClick: () => void;
+  onStartProjectClick: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick }) => {
+export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick, onStartProjectClick }) => {
+  const { t } = useLanguage();
+
   return (
     <section id="home" className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 py-16 lg:py-24">
       {/* Background Subtle Tech Grid & Glows */}
@@ -21,19 +25,19 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick
           <div className="lg:col-span-6 space-y-8">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold tracking-wide uppercase">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
-              Next-Gen Technology Ecosystem
+              {t.hero.badge}
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.15]">
-              Building Technology. <br />
-              Empowering People. <br />
+              {t.hero.title1} <br />
+              {t.hero.title2} <br />
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                Creating Impact.
+                {t.hero.title3}
               </span>
             </h1>
 
             <p className="text-lg text-slate-600 font-normal leading-relaxed max-w-xl">
-              TEKMEN Revolution is a technology ecosystem helping businesses go digital, building solutions for real-world problems, competing through innovation, and connecting the next generation of technology builders.
+              {t.hero.description}
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -41,7 +45,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick
                 onClick={onExploreClick}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base px-7 py-3.5 rounded-xl shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/35 transition-all flex items-center gap-3 group"
               >
-                <span>Explore TEKMEN</span>
+                <span>{t.hero.explore}</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -50,7 +54,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick
                 className="bg-white hover:bg-slate-50 text-slate-800 font-semibold text-base px-7 py-3.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex items-center gap-2.5"
               >
                 <Users className="w-5 h-5 text-blue-600" />
-                <span>Join the Community</span>
+                <span>{t.hero.joinCommunity}</span>
               </button>
             </div>
 
@@ -58,15 +62,15 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick
             <div className="pt-6 border-t border-slate-200/60 grid grid-cols-3 gap-6 max-w-lg">
               <div>
                 <div className="text-2xl font-bold text-slate-900">5k+</div>
-                <div className="text-xs text-slate-500 font-medium">Global Members</div>
+                <div className="text-xs text-slate-500 font-medium">{t.hero.members}</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-slate-900">150+</div>
-                <div className="text-xs text-slate-500 font-medium">Projects Delivered</div>
+                <div className="text-xs text-slate-500 font-medium">{t.hero.projects}</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-slate-900">25+</div>
-                <div className="text-xs text-slate-500 font-medium">Awards Won</div>
+                <div className="text-xs text-slate-500 font-medium">{t.hero.awards}</div>
               </div>
             </div>
           </div>
@@ -92,7 +96,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick
                     <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.8" />
                   </linearGradient>
                 </defs>
-                {/* Lines from Center (250,250) to 4 Nodes */}
                 <line x1="250" y1="250" x2="110" y2="110" stroke="url(#lineGrad)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-[pulse_3s_ease-in-out_infinite]" />
                 <line x1="250" y1="250" x2="390" y2="110" stroke="url(#lineGrad)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-[pulse_3s_ease-in-out_infinite_0.5s]" />
                 <line x1="250" y1="250" x2="110" y2="390" stroke="url(#lineGrad)" strokeWidth="2.5" strokeDasharray="6 4" className="animate-[pulse_3s_ease-in-out_infinite_1s]" />
@@ -118,56 +121,40 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onJoinCommunityClick
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-1 shadow-lg shadow-blue-500/30 hover:scale-110 transition-transform duration-300">
                   <div className="w-full h-full rounded-full bg-slate-900 flex flex-col items-center justify-center p-2 text-center border border-white/20">
                     <Briefcase className="w-5 h-5 text-blue-400 mb-1" />
-                    <span className="text-[10px] font-bold text-white tracking-wider">AGENCY</span>
+                    <span className="text-[10px] font-bold text-white leading-tight">TEKMEN Agency</span>
                   </div>
-                </div>
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
-                  TEKMEN Agency
                 </div>
               </div>
 
-              {/* TOP-RIGHT NODE: INNOVATION */}
+              {/* TOP-RIGHT NODE: INNOVATION SOLUTIONS */}
               <div className="absolute top-[8%] right-[8%] z-20 group cursor-pointer">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 p-1 shadow-lg shadow-indigo-500/30 hover:scale-110 transition-transform duration-300">
                   <div className="w-full h-full rounded-full bg-slate-900 flex flex-col items-center justify-center p-2 text-center border border-white/20">
-                    <Box className="w-5 h-5 text-violet-400 mb-1" />
-                    <span className="text-[10px] font-bold text-white tracking-wider">INNOVATION</span>
+                    <Box className="w-5 h-5 text-indigo-400 mb-1" />
+                    <span className="text-[9px] font-bold text-white leading-tight">Innovation Solutions</span>
                   </div>
-                </div>
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
-                  Innovation Solutions
                 </div>
               </div>
 
               {/* BOTTOM-LEFT NODE: TEAM */}
               <div className="absolute bottom-[8%] left-[8%] z-20 group cursor-pointer">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-rose-600 p-1 shadow-lg shadow-violet-500/30 hover:scale-110 transition-transform duration-300">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-rose-600 p-1 shadow-lg shadow-rose-500/30 hover:scale-110 transition-transform duration-300">
                   <div className="w-full h-full rounded-full bg-slate-900 flex flex-col items-center justify-center p-2 text-center border border-white/20">
                     <Trophy className="w-5 h-5 text-rose-400 mb-1" />
-                    <span className="text-[10px] font-bold text-white tracking-wider">TEAM</span>
+                    <span className="text-[10px] font-bold text-white leading-tight">TEKMEN Team</span>
                   </div>
-                </div>
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
-                  TEKMEN Team
                 </div>
               </div>
 
               {/* BOTTOM-RIGHT NODE: COMMUNITY */}
               <div className="absolute bottom-[8%] right-[8%] z-20 group cursor-pointer">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 p-1 shadow-lg shadow-teal-500/30 hover:scale-110 transition-transform duration-300">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 p-1 shadow-lg shadow-blue-500/30 hover:scale-110 transition-transform duration-300">
                   <div className="w-full h-full rounded-full bg-slate-900 flex flex-col items-center justify-center p-2 text-center border border-white/20">
-                    <Users className="w-5 h-5 text-teal-300 mb-1" />
-                    <span className="text-[10px] font-bold text-white tracking-wider">COMMUNITY</span>
+                    <Users className="w-5 h-5 text-violet-400 mb-1" />
+                    <span className="text-[10px] font-bold text-white leading-tight">Community</span>
                   </div>
                 </div>
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
-                  TEKMEN Community
-                </div>
               </div>
-
-              {/* Floating Orbiting Dots */}
-              <div className="absolute w-3 h-3 rounded-full bg-blue-400 shadow-lg shadow-blue-400 animate-ping top-1/4 left-1/3" />
-              <div className="absolute w-2.5 h-2.5 rounded-full bg-violet-400 shadow-lg shadow-violet-400 animate-pulse bottom-1/4 right-1/3" />
 
             </div>
           </div>

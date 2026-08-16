@@ -53,6 +53,18 @@ export default function App() {
     }
   };
 
+  const handleScrollToEcosystem = () => {
+    const el = document.getElementById('ecosystem');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      setCurrentView('home');
+      setTimeout(() => {
+        document.getElementById('ecosystem')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-600 selection:text-white flex flex-col justify-between">
       
@@ -68,8 +80,11 @@ export default function App() {
         {currentView === 'home' && (
           <>
             <Hero
-              onExploreClick={() => window.open(AGENCY_URL, '_blank')}
-              onJoinCommunityClick={() => setJoinModalOpen(true)}
+              onExploreClick={handleScrollToEcosystem}
+              onJoinCommunityClick={() => {
+                setCurrentView('community');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               onStartProjectClick={() => handleNavigate('start-project')}
             />
             <EcosystemSection
@@ -148,18 +163,12 @@ export default function App() {
       />
 
       {/* Floating AI Assistant Chat Widget */}
-      <AiAssistant
-        onNavigate={handleNavigate}
-      />
+      <AiAssistant currentView={currentView} />
 
-      {/* Modals */}
+      {/* Join & Lead Modals */}
       <Modals
-        joinModalOpen={joinModalOpen}
-        onCloseJoinModal={() => setJoinModalOpen(false)}
-        selectedProject={selectedLegacyProject}
-        onCloseProjectModal={() => setSelectedLegacyProject(null)}
-        selectedEcosystemCard={null}
-        onCloseEcosystemModal={() => {}}
+        isOpen={joinModalOpen}
+        onClose={() => setJoinModalOpen(false)}
       />
 
     </div>

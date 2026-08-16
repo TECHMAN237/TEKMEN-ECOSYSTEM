@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Trophy, Users, ArrowRight, CheckCircle2, Calendar, MapPin, ExternalLink, Github, Linkedin, Twitter, X, Award } from 'lucide-react';
-import { OFFICIAL_TEAM_MEMBERS, ACHIEVEMENTS_DATA, EVENTS_DATA, PROJECTS_DATA, TEAM_SQUADS } from '../data';
+import { OFFICIAL_TEAM_MEMBERS, ACHIEVEMENTS_DATA, EVENTS_DATA, PROJECTS_DATA } from '../data';
 import { TeamMember } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface TeamViewProps {
   onJoinClick: () => void;
@@ -9,8 +10,10 @@ interface TeamViewProps {
 
 export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [showAllMembersModal, setShowAllMembersModal] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [teamForm, setTeamForm] = useState({ name: '', email: '', track: 'Squad Alpha', experience: '' });
+  const { t } = useLanguage();
 
   const handleTeamSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +24,8 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
     }, 3000);
   };
 
+  const mainSixMembers = OFFICIAL_TEAM_MEMBERS.slice(0, 6);
+
   return (
     <div className="py-16 bg-white animate-in fade-in duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
@@ -29,35 +34,35 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
         <div className="text-center max-w-4xl mx-auto space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-100 text-rose-700 text-xs font-semibold tracking-wide uppercase">
             <Trophy className="w-3.5 h-3.5 text-rose-600" />
-            TEKMEN Team Roster & Recognition
+            {t.team.badge}
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
-            The People Behind TEKMEN.
+            {t.team.title}
           </h1>
           <p className="text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto">
-            Meet the people officially representing TEKMEN Revolution through technology, innovation, competitions and collaborative projects.
+            {t.team.subtitle}
           </p>
           <div className="pt-2">
             <button
               onClick={onJoinClick}
               className="bg-rose-600 hover:bg-rose-700 text-white font-semibold text-base px-7 py-3.5 rounded-xl shadow-lg shadow-rose-600/25 transition-all inline-flex items-center gap-2 group"
             >
-              <span>Apply to Join the Team</span>
+              <span>{t.team.apply}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
 
-        {/* SECTION 1: OFFICIAL TEAM MEMBERS (MUST COME BEFORE EVENTS & EXPERIENCES) */}
+        {/* SECTION 1: OFFICIAL TEAM MEMBERS (EXACTLY 6 MEMBERS) */}
         <div className="space-y-12">
           <div className="text-center">
-            <div className="text-xs font-bold tracking-widest text-rose-600 uppercase mb-2">OFFICIAL ROSTER</div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Our Team Members</h2>
-            <p className="text-sm text-slate-500 mt-1">Recognized engineers, researchers, and innovators representing TEKMEN.</p>
+            <div className="text-xs font-bold tracking-widest text-rose-600 uppercase mb-2">{t.team.rosterBadge}</div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">{t.team.rosterTitle}</h2>
+            <p className="text-sm text-slate-500 mt-1">{t.team.rosterSubtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {OFFICIAL_TEAM_MEMBERS.map((member) => (
+            {mainSixMembers.map((member) => (
               <div
                 key={member.id}
                 className="bg-white rounded-3xl border border-slate-200 p-7 shadow-xs hover:shadow-xl hover:border-rose-300 transition-all flex flex-col justify-between group"
@@ -107,14 +112,25 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
               </div>
             ))}
           </div>
+
+          {/* VIEW ALL TEAM MEMBERS CTA */}
+          <div className="text-center pt-4">
+            <button
+              onClick={() => setShowAllMembersModal(true)}
+              className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-lg transition-all inline-flex items-center gap-2 group"
+            >
+              <span>{t.team.viewAll}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </div>
 
         {/* SECTION 2: OUR ACHIEVEMENTS */}
         <div className="space-y-12">
           <div className="text-center">
-            <div className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-2">PODIUM FINISHES</div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Our Achievements</h2>
-            <p className="text-sm text-slate-500 mt-1">Hackathons, competitions, and innovation challenges won.</p>
+            <div className="text-xs font-bold tracking-widest text-amber-600 uppercase mb-2">{t.team.achievementsBadge}</div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">{t.team.achievementsTitle}</h2>
+            <p className="text-sm text-slate-500 mt-1">{t.team.achievementsSubtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -137,9 +153,9 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
         {/* SECTION 3: EXPERIENCES & EVENTS */}
         <div className="space-y-12">
           <div className="text-center">
-            <div className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">FIELD ACTIVITIES</div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Experiences & Events</h2>
-            <p className="text-sm text-slate-500 mt-1">Hackathons, summits, and summits attended by our squads.</p>
+            <div className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-2">{t.team.eventsBadge}</div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">{t.team.eventsTitle}</h2>
+            <p className="text-sm text-slate-500 mt-1">{t.team.eventsSubtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -177,8 +193,8 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
         {/* SECTION 4: PROJECTS WE BUILT TOGETHER */}
         <div className="space-y-12">
           <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Projects We Built Together</h2>
-            <p className="text-sm text-slate-500 mt-1">Collaborative software creations built by TEKMEN competitive teams.</p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">{t.team.projectsTitle}</h2>
+            <p className="text-sm text-slate-500 mt-1">{t.team.projectsSubtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -201,15 +217,15 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
         <div className="bg-gradient-to-br from-slate-950 via-rose-950 to-indigo-950 text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl">
           <div className="max-w-2xl mx-auto space-y-6 relative z-10">
             <div className="text-center space-y-2">
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Want to Represent TEKMEN?</h3>
-              <p className="text-slate-300 text-sm">We're building teams of people who want to learn, compete, create and represent TEKMEN on bigger stages.</p>
+              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t.team.formTitle}</h3>
+              <p className="text-slate-300 text-sm">{t.team.formSubtitle}</p>
             </div>
 
             {formSubmitted ? (
-              <div className="bg-emerald-950/80 border border-emerald-500/40 p-6 rounded-2xl text-center space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
+              <div className="bg-slate-900 border border-indigo-500/40 p-6 rounded-2xl text-center space-y-2">
+                <CheckCircle2 className="w-8 h-8 text-blue-400 mx-auto" />
                 <h4 className="font-bold text-white text-base">Application Received!</h4>
-                <p className="text-xs text-emerald-200">Our team captain will reach out to evaluate your qualifications and schedule a technical intro.</p>
+                <p className="text-xs text-slate-300">Our team captain will reach out to evaluate your qualifications and schedule a technical intro.</p>
               </div>
             ) : (
               <form onSubmit={handleTeamSubmit} className="space-y-4">
@@ -277,6 +293,57 @@ export const TeamView: React.FC<TeamViewProps> = ({ onJoinClick }) => {
         </div>
 
       </div>
+
+      {/* VIEW ALL TEAM MEMBERS MODAL */}
+      {showAllMembersModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-4xl w-full p-8 space-y-6 shadow-2xl relative animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">Complete TEKMEN Team Directory</h3>
+                <p className="text-xs text-slate-500 mt-0.5">All official researchers, engineers, and squad leaders.</p>
+              </div>
+              <button
+                onClick={() => setShowAllMembersModal(false)}
+                className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {OFFICIAL_TEAM_MEMBERS.map((member) => (
+                <div key={member.id} className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-start gap-4">
+                  <img src={member.avatar} alt={member.name} className="w-14 h-14 rounded-xl object-cover shadow-xs shrink-0" referrerPolicy="no-referrer" />
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <h4 className="font-bold text-slate-900 text-sm truncate">{member.name}</h4>
+                    <div className="text-xs font-semibold text-rose-600 truncate">{member.role}</div>
+                    <p className="text-[11px] text-slate-600 line-clamp-2 mt-1">{member.bio}</p>
+                    <button
+                      onClick={() => {
+                        setShowAllMembersModal(false);
+                        setSelectedMember(member);
+                      }}
+                      className="text-[11px] font-bold text-blue-600 hover:underline mt-2 inline-block"
+                    >
+                      View Full Profile →
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => setShowAllMembersModal(false)}
+                className="bg-slate-900 text-white font-semibold text-xs px-6 py-2.5 rounded-xl"
+              >
+                Close Directory
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TEAM MEMBER PROFILE MODAL */}
       {selectedMember && (

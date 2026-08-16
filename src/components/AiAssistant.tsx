@@ -1,21 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, X, Send, Bot, User, Loader2, MessageSquare } from 'lucide-react';
-import { ChatMessage } from '../types';
-import { QUICK_QUESTIONS } from '../data';
+import { Sparkles, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { ChatMessage, ViewState } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
-export const AiAssistant: React.FC = () => {
+interface AiAssistantProps {
+  currentView?: ViewState;
+}
+
+export const AiAssistant: React.FC<AiAssistantProps> = ({ currentView = 'home' }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Hello! I am TEKMEN AI. How can I help you explore our technology ecosystem today?',
-      timestamp: new Date()
-    }
-  ]);
+  const { lang, t } = useLanguage();
+
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Initialize welcome message based on language
+    setMessages([
+      {
+        id: '1',
+        role: 'assistant',
+        content: t.ai.welcome,
+        timestamp: new Date()
+      }
+    ]);
+  }, [lang]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,6 +37,20 @@ export const AiAssistant: React.FC = () => {
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  const quickQuestions = lang === 'FR' ? [
+    'Qu’est-ce que TEKMEN Revolution ?',
+    'Que fait TEKMEN Agency ?',
+    'Comment rejoindre la communauté ?',
+    'Qui fait partie de l’équipe TEKMEN ?',
+    'Qui a fondé TEKMEN Revolution ?'
+  ] : [
+    'What is TEKMEN Revolution?',
+    'What does TEKMEN Agency do?',
+    'How can I join TEKMEN Community?',
+    'Who is part of the TEKMEN Team?',
+    'Who founded TEKMEN Revolution?'
+  ];
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = textToSend || inputValue;
@@ -47,12 +72,14 @@ export const AiAssistant: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content }))
+          messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content })),
+          currentView,
+          language: lang
         })
       });
 
       const data = await response.json();
-      const replyContent = data.reply || "I am here to assist you with the TEKMEN Revolution ecosystem.";
+      const replyContent = data.reply || (lang === 'FR' ? "Je suis là pour vous aider à naviguer dans l'écosystème TEKMEN Revolution." : "I am here to assist you with the TEKMEN Revolution ecosystem.");
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -67,7 +94,7 @@ export const AiAssistant: React.FC = () => {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "Sorry, I encountered an error connecting to TEKMEN AI. Please try again.",
+        content: lang === 'FR' ? "Je rencontre actuellement un problème de connexion. Veuillez réessayer dans un instant." : "I'm having trouble connecting right now. Please try again in a moment.",
         timestamp: new Date()
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -84,9 +111,9 @@ export const AiAssistant: React.FC = () => {
           className="group relative flex items-center gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-105 transition-all duration-300"
           aria-label="Open TEKMEN AI Assistant"
         >
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse" />
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-blue-400 rounded-full border-2 border-white animate-pulse" />
           <Sparkles className="w-6 h-6 animate-pulse" />
-          <span className="hidden sm:inline font-semibold text-sm pr-1">Ask TEKMEN AI</span>
+          <span className="hidden sm:inline font-semibold text-sm pr-1">{t.ai.button}</span>
         </button>
       ) : (
         <div className="w-[90vw] sm:w-[400px] h-[550px] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
@@ -98,8 +125,8 @@ export const AiAssistant: React.FC = () => {
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-sm tracking-wide">Ask TEKMEN AI</h3>
-                <p className="text-[11px] text-blue-300">How can we help you?</p>
+                <h3 className="font-bold text-sm tracking-wide">{t.ai.button}</h3>
+                <p className="text-[11px] text-blue-300">{t.ai.subtitle}</p>
               </div>
             </div>
             <button
@@ -142,7 +169,7 @@ export const AiAssistant: React.FC = () => {
                 </div>
                 <div className="p-3.5 bg-white text-slate-500 border border-slate-200/80 rounded-2xl rounded-tl-xs flex items-center gap-2 text-xs">
                   <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
-                  <span>TEKMEN AI is thinking...</span>
+                  <span>{t.ai.thinking}</span>
                 </div>
               </div>
             )}
@@ -152,9 +179,9 @@ export const AiAssistant: React.FC = () => {
           {/* Quick Suggested Questions */}
           {messages.length <= 2 && (
             <div className="p-3 bg-white border-t border-slate-100">
-              <div className="text-[11px] font-semibold text-slate-500 mb-2 px-1">Suggested questions:</div>
+              <div className="text-[11px] font-semibold text-slate-500 mb-2 px-1">{t.ai.suggested}</div>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-                {QUICK_QUESTIONS.map((q, idx) => (
+                {quickQuestions.map((q, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(q)}
@@ -174,7 +201,7 @@ export const AiAssistant: React.FC = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ask anything about TEKMEN..."
+              placeholder={t.ai.placeholder}
               className="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
             />
             <button

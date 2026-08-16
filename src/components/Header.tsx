@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Globe, ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
 import { ViewState } from '../types';
-import { AGENCY_URL } from '../data';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HeaderProps {
   onJoinClick: () => void;
@@ -12,24 +12,18 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState('EN');
+  const { lang, setLang, t } = useLanguage();
 
-  const navItems: { id: ViewState | 'agency'; label: string; external?: boolean }[] = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'agency', label: 'Agency', external: true },
-    { id: 'innovation', label: 'Innovation Solutions' },
-    { id: 'team', label: 'Team' },
-    { id: 'community', label: 'Community' },
+  const navItems: { id: ViewState; label: string }[] = [
+    { id: 'home', label: t.nav.home },
+    { id: 'about', label: t.nav.about },
+    { id: 'team', label: t.nav.team },
+    { id: 'community', label: t.nav.community },
   ];
 
-  const handleItemClick = (item: { id: any; external?: boolean }) => {
+  const handleItemClick = (id: ViewState) => {
     setMobileMenuOpen(false);
-    if (item.external || item.id === 'agency') {
-      window.open(AGENCY_URL, '_blank');
-    } else {
-      onNavigate(item.id);
-    }
+    onNavigate(id);
   };
 
   return (
@@ -63,8 +57,8 @@ export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavi
             return (
               <button
                 key={item.id}
-                onClick={() => handleItemClick(item)}
-                className={`relative px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
+                onClick={() => handleItemClick(item.id)}
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                   isActive 
                     ? 'text-blue-600 font-semibold' 
                     : 'text-slate-600 hover:text-slate-900'
@@ -72,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavi
               >
                 {item.label}
                 {isActive && (
-                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-gradient-to-r from-blue-600 to-violet-600 rounded-full" />
+                  <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-blue-600 to-violet-600 rounded-full" />
                 )}
               </button>
             );
@@ -88,24 +82,24 @@ export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavi
               className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-lg border border-slate-200 transition-colors"
             >
               <Globe className="w-3.5 h-3.5 text-slate-500" />
-              <span>{currentLang}</span>
+              <span>{lang}</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {langDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-28 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-50">
-                {['EN', 'ES', 'FR', 'DE', 'JA'].map((lang) => (
+              <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-50">
+                {(['EN', 'FR'] as const).map((l) => (
                   <button
-                    key={lang}
+                    key={l}
                     onClick={() => {
-                      setCurrentLang(lang);
+                      setLang(l);
                       setLangDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs font-medium hover:bg-slate-50 ${
-                      currentLang === lang ? 'text-blue-600 font-semibold bg-blue-50/50' : 'text-slate-700'
+                    className={`w-full text-left px-3.5 py-2 text-xs font-medium hover:bg-slate-50 ${
+                      lang === l ? 'text-blue-600 font-semibold bg-blue-50/50' : 'text-slate-700'
                     }`}
                   >
-                    {lang === 'EN' ? 'English (EN)' : lang === 'ES' ? 'Español (ES)' : lang === 'FR' ? 'Français (FR)' : lang === 'DE' ? 'Deutsch (DE)' : '日本語 (JA)'}
+                    {l === 'EN' ? 'English (EN)' : 'Français (FR)'}
                   </button>
                 ))}
               </div>
@@ -117,7 +111,7 @@ export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavi
             onClick={onJoinClick}
             className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:shadow-blue-600/30 flex items-center gap-2 group"
           >
-            <span>Join TEKMEN</span>
+            <span>{t.nav.join}</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
@@ -147,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavi
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => handleItemClick(item)}
+              onClick={() => handleItemClick(item.id)}
               className={`w-full text-left px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                 currentView === item.id 
                   ? 'bg-blue-50 text-blue-600 font-semibold' 
@@ -160,15 +154,15 @@ export const Header: React.FC<HeaderProps> = ({ onJoinClick, currentView, onNavi
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between px-2">
             <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
               <Globe className="w-4 h-4 text-slate-500" />
-              <span>Language: {currentLang}</span>
+              <span>Language: {lang}</span>
             </div>
             <button
               onClick={() => {
-                setCurrentLang(currentLang === 'EN' ? 'ES' : currentLang === 'ES' ? 'FR' : 'EN');
+                setLang(lang === 'EN' ? 'FR' : 'EN');
               }}
               className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg"
             >
-              Change
+              {lang === 'EN' ? 'Switch to FR' : 'Switch to EN'}
             </button>
           </div>
         </div>

@@ -1,12 +1,16 @@
-import React from 'react';
-import { Briefcase, Box, Trophy, Users, ArrowRight } from 'lucide-react';
-import { ECOSYSTEM_CARDS } from '../data';
+import React, { useState } from 'react';
+import { Briefcase, Box, Trophy, Users, ArrowRight, X } from 'lucide-react';
+import { ECOSYSTEM_CARDS, AGENCY_URL } from '../data';
+import { useLanguage } from '../context/LanguageContext';
 
 interface EcosystemSectionProps {
   onCardClick: (cardId: string) => void;
 }
 
 export const EcosystemSection: React.FC<EcosystemSectionProps> = ({ onCardClick }) => {
+  const [solutionsModalOpen, setSolutionsModalOpen] = useState(false);
+  const { t } = useLanguage();
+
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'Briefcase':
@@ -16,7 +20,7 @@ export const EcosystemSection: React.FC<EcosystemSectionProps> = ({ onCardClick 
       case 'Trophy':
         return <Trophy className="w-6 h-6 text-rose-600" />;
       case 'Users':
-        return <Users className="w-6 h-6 text-emerald-600" />;
+        return <Users className="w-6 h-6 text-blue-600" />;
       default:
         return <Briefcase className="w-6 h-6 text-blue-600" />;
     }
@@ -31,23 +35,33 @@ export const EcosystemSection: React.FC<EcosystemSectionProps> = ({ onCardClick 
       case 'red':
         return 'bg-rose-50 border-rose-100 text-rose-700';
       case 'emerald':
-        return 'bg-emerald-50 border-emerald-100 text-emerald-700';
+        return 'bg-blue-50 border-blue-100 text-blue-700';
       default:
         return 'bg-blue-50 border-blue-100 text-blue-700';
     }
   };
 
+  const handleCardInternalClick = (cardId: string) => {
+    if (cardId === 'agency') {
+      window.open(AGENCY_URL, '_blank');
+    } else if (cardId === 'solutions') {
+      setSolutionsModalOpen(true);
+    } else {
+      onCardClick(cardId);
+    }
+  };
+
   return (
-    <section id="agency" className="py-20 bg-white relative overflow-hidden">
+    <section id="ecosystem" className="py-20 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="text-xs font-bold tracking-widest text-blue-600 uppercase mb-3">
-            OUR ECOSYSTEM
+            {t.ecosystem.tag}
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            One Ecosystem. Four Ways to <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Create Impact.</span>
+            {t.ecosystem.title} <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">{t.ecosystem.highlight}</span>
           </h2>
         </div>
 
@@ -57,7 +71,7 @@ export const EcosystemSection: React.FC<EcosystemSectionProps> = ({ onCardClick 
             return (
               <div
                 key={card.id}
-                onClick={() => onCardClick(card.id)}
+                onClick={() => handleCardInternalClick(card.id)}
                 className="group bg-white rounded-2xl border border-slate-200/80 p-7 shadow-xs hover:shadow-xl hover:border-blue-200 transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
               >
                 {/* Subtle top background wave pattern */}
@@ -89,6 +103,40 @@ export const EcosystemSection: React.FC<EcosystemSectionProps> = ({ onCardClick 
         </div>
 
       </div>
+
+      {/* Innovation Solutions Notice Modal */}
+      {solutionsModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-8 space-y-6 shadow-2xl relative animate-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setSolutionsModalOpen(false)}
+              className="absolute top-6 right-6 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <Box className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-slate-900">TEKMEN Innovation Solutions</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                The detailed website for TEKMEN Innovation Solutions is currently being developed as an independent experience. It will soon showcase our advanced software suites, IoT infrastructure, and custom AI models. Stay tuned!
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => setSolutionsModalOpen(false)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2.5 rounded-xl transition-all"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
